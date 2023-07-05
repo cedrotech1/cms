@@ -102,6 +102,38 @@
                   </div>
                 </div>
 
+                <div class="col-md-12">
+                  <div class="form-floating">
+                    <select type="text" class="form-control" id="floatingName" name='vender' placeholder="Your Name">
+                     
+                    <?php
+                    include './connection.php';
+	
+                    $sql = "SELECT * FROM venders";
+                    $result = $conn->query($sql);
+
+                    if ($result->num_rows > 0) {
+                  
+                      while($row = mysqli_fetch_array($result)) {
+                       $i++;
+                       ?>
+                         <option value="<?php echo $row['0'] ?>"><?php echo $row['1']. " ".$row['2']; ?></option>
+                       <?php
+                      }
+                    } else {
+                      ?>
+                     <option disabled>0 vender</option>
+                      <?php
+                    }
+                  ?>
+                    
+                    
+                     
+                    </select>
+                    <label for="floatingName">Supplied By</label>
+                  </div>
+                </div>
+
                
                
           
@@ -143,6 +175,7 @@
                       <th scope="col">description</th>
                       <th scope="col">quantity</th>
                       <th scope="col">price</th>
+                      <th scope="col">supplied by</th>
                      
                       <th scope="col"  style="text-align:LEFT">Modify</th>
                     </tr>
@@ -152,7 +185,8 @@
                   <?php
                     include './connection.php';
 	
-                    $sql = "SELECT * FROM product";
+                    $sql = "SELECT * FROM product,venders where product.vid=venders.v_id";
+
                     $result = $conn->query($sql);
 
                     if ($result->num_rows > 0) {
@@ -168,6 +202,7 @@
                               
                               <td><?php echo $row["3"];?></td>
                               <td><?php echo $row["4"];?></td>
+                              <td><?php echo $row["v_fname"]. " ".$row["v_lname"];?></td>  
      
                               <td> <a href="delete_product.php?id=<?php echo $row["0"]  ?>"><button type="button" class="btn btn-outline-danger btn-sm">delete</button> </a></td>
 
@@ -239,6 +274,7 @@ include './connection.php';
 @$desc=$_POST["desc"];
 @$quantity=$_POST["quantity"];
 @$price=$_POST["price"];
+@$vender=$_POST["vender"];
 
 
 // @$email=$_POST["email"];
@@ -248,15 +284,15 @@ include './connection.php';
 
 if(isset($go))
 {
-  if($name!='' || $desc!=''  || $quantity!='' || $price!='')
+  if($name!='' || $desc!=''  || $quantity!='' || $price!='' || $vender!='')
   {
 
 
 
   //echo '<script>alert("Welcome to Geeks for Geeks")</script>';
 
-    $sql = "INSERT INTO `product` (`p_id`, `p_name`, `decription`, `quantity`, `price`) 
-    VALUES (NULL, '$name', '$desc', '$quantity', '$price');";
+    $sql = "INSERT INTO `product` (`p_id`, `p_name`, `decription`, `quantity`, `price`,`vid`) 
+    VALUES (NULL, '$name', '$desc', '$quantity', '$price','$vender');";
 
     if (mysqli_query($conn, $sql)) {
 
