@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.1
+-- version 5.1.1
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 02, 2023 at 12:02 PM
--- Server version: 10.4.28-MariaDB
--- PHP Version: 8.2.4
+-- Generation Time: Jul 06, 2023 at 04:41 PM
+-- Server version: 10.4.21-MariaDB
+-- PHP Version: 7.3.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -34,15 +34,14 @@ CREATE TABLE `customers` (
   `c_address` varchar(20) NOT NULL,
   `c_gender` varchar(10) NOT NULL,
   `c_phone` varchar(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `customers`
 --
 
 INSERT INTO `customers` (`customer_id`, `c_fname`, `c_lname`, `c_address`, `c_gender`, `c_phone`) VALUES
-(2, 'cedrick', 'mundekwe', 'gatsata', 'male', ''),
-(3, 'peter', 'kageme', 'gatsata', 'male', '234567890');
+(1, 'Cedrick', 'hakuzimana', 'huye', 'male', '0784366616');
 
 -- --------------------------------------------------------
 
@@ -55,15 +54,17 @@ CREATE TABLE `product` (
   `p_name` varchar(20) NOT NULL,
   `decription` varchar(100) NOT NULL,
   `quantity` varchar(20) NOT NULL,
-  `price` varchar(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `price` varchar(20) NOT NULL,
+  `vid` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `product`
 --
 
-INSERT INTO `product` (`p_id`, `p_name`, `decription`, `quantity`, `price`) VALUES
-(2, 'machine', '                    hp with high processor', '45', '1000000');
+INSERT INTO `product` (`p_id`, `p_name`, `decription`, `quantity`, `price`, `vid`) VALUES
+(1, 'Printer', '                   printer with higth quality ', '34', '50000', 1),
+(2, 'computer', '                    hp i7 8gb ram !', '100', '300000', 2);
 
 -- --------------------------------------------------------
 
@@ -79,14 +80,14 @@ CREATE TABLE `sales` (
   `price` int(11) NOT NULL,
   `date` date NOT NULL,
   `time` time NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `sales`
 --
 
 INSERT INTO `sales` (`id`, `c_id`, `p_id`, `quantity`, `price`, `date`, `time`) VALUES
-(6, 2, 2, 45, 1000000, '2007-02-23', '11:07:16');
+(1, 1, 1, 34, 50000, '2007-05-23', '07:07:26');
 
 -- --------------------------------------------------------
 
@@ -101,14 +102,15 @@ CREATE TABLE `venders` (
   `v_phone` varchar(20) NOT NULL,
   `v_gender` varchar(10) NOT NULL,
   `addres` varchar(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `venders`
 --
 
 INSERT INTO `venders` (`v_id`, `v_fname`, `v_lname`, `v_phone`, `v_gender`, `addres`) VALUES
-(2, 'cedrick', 'mundekwe', '234567', 'male', 'gatsata');
+(1, 'epiphani', 'epi', '078234566', 'female', 'huye'),
+(2, 'Ruth', 'abimana', '0784565432', 'male', 'huye');
 
 --
 -- Indexes for dumped tables
@@ -124,13 +126,16 @@ ALTER TABLE `customers`
 -- Indexes for table `product`
 --
 ALTER TABLE `product`
-  ADD PRIMARY KEY (`p_id`);
+  ADD PRIMARY KEY (`p_id`),
+  ADD KEY `FK_v` (`vid`);
 
 --
 -- Indexes for table `sales`
 --
 ALTER TABLE `sales`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `FK_cust` (`c_id`),
+  ADD KEY `FK_prod` (`p_id`);
 
 --
 -- Indexes for table `venders`
@@ -146,7 +151,7 @@ ALTER TABLE `venders`
 -- AUTO_INCREMENT for table `customers`
 --
 ALTER TABLE `customers`
-  MODIFY `customer_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `customer_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `product`
@@ -158,13 +163,30 @@ ALTER TABLE `product`
 -- AUTO_INCREMENT for table `sales`
 --
 ALTER TABLE `sales`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `venders`
 --
 ALTER TABLE `venders`
   MODIFY `v_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `product`
+--
+ALTER TABLE `product`
+  ADD CONSTRAINT `FK_v` FOREIGN KEY (`vid`) REFERENCES `venders` (`v_id`);
+
+--
+-- Constraints for table `sales`
+--
+ALTER TABLE `sales`
+  ADD CONSTRAINT `FK_cust` FOREIGN KEY (`c_id`) REFERENCES `customers` (`customer_id`),
+  ADD CONSTRAINT `FK_prod` FOREIGN KEY (`p_id`) REFERENCES `product` (`p_id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
